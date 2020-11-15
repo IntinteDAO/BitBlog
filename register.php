@@ -28,6 +28,7 @@ $error = 0;
 		}
 
 		$recovery_phases_ids = array_rand($recovery_phases_database, $recovery_phases_quantity);
+		$recovery_phases = '';
 
 		for($i=0; $i<=$recovery_phases_quantity-1; $i++) {
 			$recovery_phases = trim($recovery_phases.' '.$recovery_phases_database[$recovery_phases_ids[$i]]);
