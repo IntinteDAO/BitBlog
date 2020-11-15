@@ -15,14 +15,14 @@ function verify_html($html) {
 		} else {
 			foreach ($tag->attributes as $attr) {
 
-//				echo $attr->value.PHP_EOL;
 				if (!in_array($attr->nodeName, $allowed_attrs)) {
 					$tag->removeAttribute($attr->nodeName);
 				}
 
-				if($attr->name=="href") {
+				if($attr->name=="href" || $attr->name=="src") {
 					if( (preg_match('%^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?$%iu', $attr->value) == 0) || (filter_var($attr->value, FILTER_VALIDATE_URL) == false) ) {
 						$tag->removeAttribute($attr->nodeName);
+						$tag->parentNode->removeChild($tag);
 					}
 				}
 
