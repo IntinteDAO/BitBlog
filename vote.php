@@ -1,9 +1,13 @@
 <?php
 
+include('config.php');
+
+if(empty($_SESSION['login'])) { die('No auth'); }
+
 if(!empty($_POST['id'])) {
 	if (preg_match("/^[a-f0-9]{64}$/", $_POST['id'])) {
 		if(file_exists('articles/'.$_POST['id'].'.json')) {
-			$nickname = 'fervi';
+			$nickname = $_SESSION['login'];
 			$id_nickname = hash('sha256', $nickname);
 			$upvote = !empty($_POST['upvote']);
 			if($upvote == 1) {
