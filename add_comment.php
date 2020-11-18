@@ -1,18 +1,18 @@
 <?php
 
+include('config.php');
+if(empty($_SESSION['login'])) { die('Need auth'); }
 
 if( (!empty($_POST['id'])) && (!empty($_POST['comment'])) ) {
 	if( (strlen(trim($_POST['comment'])) < 10) || (trim(strlen($_POST['comment'])) > 500) ) { die(); }
         if (preg_match("/^[a-f0-9]{64}$/", $_POST['id'])) {
                 if(file_exists('articles/'.$_POST['id'].'.json')) {
 
-			include('config.php');
 			$id = $_POST['id'];
-
 			// If comment directory NOT exists - create it
 			if(!file_exists('indexes/comments/'.$id)) { mkdir('indexes/comments/'.$_POST['id']); }
 
-			$data['username'] = 'fervi';
+			$data['username'] = $_SESSION['login'];
 			$data['node'] = $node;
 			$data['created'] = time();
 			$data['body'] = trim($_POST['comment']);
