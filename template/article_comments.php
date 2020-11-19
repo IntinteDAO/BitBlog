@@ -43,7 +43,13 @@ for($i=0; $i<=count($files)-1; $i++) {
 	$read_comment = file($files[$i])[0];
 	$read_comment_array = json_decode($read_comment, TRUE);
 	$id_comment = str_replace('.json', '', str_replace(getcwd().'/indexes/comments/'.$id.'/', '', $files[$i]));
-	echo '<b>'.$read_comment_array['username'].'</b> - '.time_elapsed_string('@'.$read_comment_array['created']).' (<a class="link" onclick=\''.add_subcomment($id, $id_comment).';\'>Reply</a>)<br>';
+
+	if(isset($_SESSION['login'])) {
+		echo '<b>'.$read_comment_array['username'].'</b> - '.time_elapsed_string('@'.$read_comment_array['created']).' (<a class="link" onclick=\''.add_subcomment($id, $id_comment).';\'>Reply</a>)<br>';
+	} else {
+		echo '<b>'.$read_comment_array['username'].'</b> - '.time_elapsed_string('@'.$read_comment_array['created']).'<br>';
+	}
+
 	echo htmlspecialchars(trim($read_comment_array['body'])).'<br>';
 	echo '<div id="'.$id_comment.'"></div>';
 

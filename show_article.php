@@ -15,8 +15,8 @@ if(!empty($_GET['id'])) {
 			$file = file('articles/'.$_GET['id'].'.json')[0];
 			$json = json_decode($file, TRUE);
 			$body = $json['body'];
-			$nickname = 'fervi';
-			$id_nickname = hash('sha256', $nickname);
+			$nickname = $json['creator'];
+
 
 			echo '<div class="col-12"><h2>'.htmlspecialchars($json['title']).'</h2>';
 			echo 'by <a href="user.php?username='.$json['creator'].'">'.$json['creator'].'</a>';
@@ -26,19 +26,26 @@ if(!empty($_GET['id'])) {
 			echo '<hr></div>';
 			echo '<div class="col-12">'.$body.'</div>';
 			echo '<div class="col-12"><hr>';
+			if(!isset($_SESSION['login'])) { echo '<center>No account? Create one <a target="_blank" href="register.php">today</a>! For example, the account allows you to support authors of content</center>'; }
 			echo '<center>';
-			if(!empty($nickname)) {
-			if(file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_nickname)) { $upvote_class = ''; } else { $upvote_class = 'class="d-none"';}
-			if(file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_nickname)) { $downvote_class = ''; } else { $downvote_class = 'class="d-none"';}
-			if((!file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_nickname)) && (!file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_nickname))) { $upvote_class = ''; $downvote_class = ''; }
-			echo '<a id="upvote" '.$upvote_class.' onclick="$.post(\'vote.php\', { upvote: 1, id: \''.$_GET['id'].'\'}); document.getElementById(\'downvote\').classList.remove(\'d-none\'); document.getElementById(\'upvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-success"><i class="far fa-thumbs-up"></i> Like!</button></a> ';
-			echo '<a id="downvote" '.$downvote_class.' onclick="$.post(\'vote.php\', { upvote: 0, id: \''.$_GET['id'].'\'}); document.getElementById(\'upvote\').classList.remove(\'d-none\'); document.getElementById(\'downvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Dislike!</button></a> '; }
-			if($tip_enable == 1) { echo '<a href="#"><button type="button" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></a>'; }
+			if(isset($_SESSION['login'])) {
+				$id_username = hash('sha256', $_SESSION['login']);
+				if(file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_username)) { $upvote_class = ''; } else { $upvote_class = 'class="d-none"';}
+				if(file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_username)) { $downvote_class = ''; } else { $downvote_class = 'class="d-none"';}
+				if((!file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_username)) && (!file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_username))) { $upvote_class = ''; $downvote_class = ''; }
+				echo '<a id="upvote" '.$upvote_class.' onclick="$.post(\'vote.php\', { upvote: 1, id: \''.$_GET['id'].'\'}); document.getElementById(\'downvote\').classList.remove(\'d-none\'); document.getElementById(\'upvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-success"><i class="far fa-thumbs-up"></i> Like!</button></a> ';
+				echo '<a id="downvote" '.$downvote_class.' onclick="$.post(\'vote.php\', { upvote: 0, id: \''.$_GET['id'].'\'}); document.getElementById(\'upvote\').classList.remove(\'d-none\'); document.getElementById(\'downvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Dislike!</button></a> ';
+				if($tip_enable == 1) { echo '<a href="#"><button type="button" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></a>'; }
+			}
 			echo '</center>';
 			echo '<hr>';
 			show_comments($_GET['id']);
 			echo '<br>';
-			echo add_comments($_GET['id']);
+
+			if(isset($_SESSION['login'])) {
+				echo add_comments($_GET['id']);
+			}
+
 			echo '</div>';
 
 		}
