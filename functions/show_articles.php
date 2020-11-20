@@ -1,5 +1,7 @@
 <?php
 
+include('functions/date_distance.php');
+
 function show_articles($dir)
 {
 
@@ -13,8 +15,26 @@ usort($files, function($x, $y) {
 
 $min = min(count($files), 30) - 1;
 for($i=0; $i<=$min; $i++) {
-    $without_extension = str_replace('.json', '', str_replace(getcwd().'/'.$dir.'/', '', $files[$i]));
-    echo '<div class="col-12"><a href="show_article.php?id='.$without_extension.'">'.str_replace(getcwd().'/'.$dir.'/', '', $files[$i]).'</a></div>';
+	$article_data = json_decode(file($files[$i])[0], TRUE);
+	$title = htmlspecialchars($article_data['title']);
+//	print_r($article_data);
+	$article_id = str_replace('.json', '', str_replace(getcwd().'/'.$dir.'/', '', $files[$i]));
+	$creator = $article_data['creator'];
+	global $node;
+	if($article_data['node'] != $node) { $creator_node = $article_data['node']; } else { $creator_node = ''; }
+	$body = strip_tags($article_data['body']);
+	$date = time_elapsed_string('@'.$article_data['created']);
+	$tag = $article_data['tags'][0];
+
+	echo '<div class="col-12">
+		<a target="_blank" href="user.php?username='.$creator.'">'.$creator.'</a> 
+		'.$creator_node.' in 
+		<a target="_blank" href="tags.php?tag='.$tag.'">#'.$tag.'</a> 
+		'.$date.'
+		<h4><a href="show_article.php?id='.$article_id.'">'.$title.'</a></h4>
+		<p class="truncate">'.$body.'</p>
+		<hr>
+	</div>';
 }
 
 }
