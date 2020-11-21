@@ -9,7 +9,7 @@ include('functions/tag_verify.php');
 
 if(empty($_SESSION['login'])) { die('You are not logged in'); }
 
-if( !empty($_POST['title']) && !empty($_POST['text']) && !empty($_POST['tags']) ) {
+if( !empty(trim($_POST['title'])) && !empty(trim($_POST['text'])) && !empty(trim($_POST['tags'])) ) {
 
 	$error = 0;
 
@@ -37,6 +37,7 @@ if( !empty($_POST['title']) && !empty($_POST['text']) && !empty($_POST['tags']) 
 		$save_to_file['last_update'] = time();
 		$save_to_file['title'] = $_POST['title'];
 		$save_to_file['body'] = str_replace('</body></html>', '', str_replace('<html><body>', '', str_replace('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">', '', verify_html($_POST['text']))));
+		if(empty(trim(strip_tags($save_to_file['body'])))) { die(); }
 		$save_to_file['tags'] = $tags;
 		$json = json_encode($save_to_file);
 		$filename = hash("sha256", $json);
