@@ -5,6 +5,7 @@ $salt = '';
 $iv = ''; // AES 256 IV required and stored by base64 [ base64_encode(openssl_random_pseudo_bytes(16)); ]
 $node = 'bitblog.intinte.org'; // Node ID, recommended to set domain
 $recovery_phases_quantity = 12;
+$max_articles_per_day = 5; //maximum number of articles added by the user per day
 
 $tip_enable = 1;
 
