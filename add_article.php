@@ -69,14 +69,16 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 	
 	echo '<div class="col-12"><form method="POST">
 	<input id="Id" type="hidden" name="text" value="">
-	<input class="form-control" type="text" name="title" placeholder="Title">';
+	<input class="form-control" id="title" type="text" name="title" placeholder="Title">';
 	echo init_editor();
 	echo '
 	<input type="text" id="tags" name="tags" data-role="tagsinput" value="" placeholder="Tags">
 	Tags - (like bitcoin, community, games) Use the prefix for language tags (pl-bitcoin, de-internet, fr-crypto etc.)<br>
-	<button class="btn btn-primary" onclick="document.getElementById(\'Id\').value=$(\'#summernote\').summernote(\'code\');">Add comment</button>
+	<button class="btn btn-primary" onclick="document.getElementById(\'Id\').value=$(\'#summernote\').summernote(\'code\');">Add article</button>
 	</form></div>';
 }
 
 include('footer.php');
 ?>
+
+<script src="libs/js/bitblog/add_article.js"></script>
