@@ -9,3 +9,10 @@ border-left: 3px solid grey;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #DDD;
+}
