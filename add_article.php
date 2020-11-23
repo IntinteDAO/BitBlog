@@ -9,6 +9,8 @@ include('functions/tag_verify.php');
 
 $current_date = date("Y-m-d");
 if(empty($_SESSION['login'])) { die('You are not logged in'); }
+if(!file_exists('indexes/antispam_articles/'.$current_date)) { mkdir('indexes/antispam_articles/'.$current_date);}
+if(!file_exists('indexes/antispam_articles/'.$current_date.'/'.$_SESSION['login'])) { mkdir('indexes/antispam_articles/'.$current_date.'/'.$_SESSION['login']); }
 if(iterator_count(new FilesystemIterator(__DIR__.'/indexes/antispam_articles/'.$current_date.'/'.$_SESSION['login'], FilesystemIterator::SKIP_DOTS)) >= $max_articles_per_day) { die('You have exceeded the maximum number of daily entries - wait until tomorrow!'); }
 
 if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($_POST['tags'])) ) {
@@ -58,10 +60,6 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 			symlink('../../../articles/'.$filename.'.json', 'indexes/tags/'.$tags[$i].'/'.$filename.'.json');
 		}
 
-
-		$username = $_SESSION['login'];
-		if(!file_exists('indexes/antispam_articles/'.$current_date)) { mkdir('indexes/antispam_articles/'.$current_date);}
-		if(!file_exists('indexes/antispam_articles/'.$current_date.'/'.$username)) { mkdir('indexes/antispam_articles/'.$current_date.'/'.$username); }
 		symlink('../../../../articles/'.$filename.'.json', 'indexes/antispam_articles/'.$current_date.'/'.$save_to_file['creator'].'/'.$filename.'.json');
 		symlink('../../../articles/'.$filename.'.json', 'indexes/users/'.$save_to_file['creator'].'/'.$filename.'.json');
 		echo '<meta http-equiv="refresh" content="0; url=show_article.php?id='.$filename.'" />';
