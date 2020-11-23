@@ -21,7 +21,7 @@ if(!empty($_GET['id'])) {
 			$nickname = $json['creator'];
 
 
-			echo '<div class="col-12"><h2>'.htmlspecialchars($json['title']).'</h2>';
+			echo '<div class="col-12 text-break"><h2>'.htmlspecialchars($json['title']).'</h2>';
 			echo 'by <a href="user.php?username='.$json['creator'].'">'.$json['creator'].'</a>';
 			if($json['node'] != $node) { echo '@'.$json['node']; }
 			echo ' | <a href="tags.php?tag='.$json['tags'][0].'">'.$json['tags'][0].'</a>';
@@ -29,11 +29,11 @@ if(!empty($_GET['id'])) {
 			echo '<hr></div>';
 
 			if(in_array('nsfw', $json['tags'])) {
-				echo '<div class="col-12">';
+				echo '<div class="col-12 text-break">';
 				echo '<a id="nsfw-info" class="btn btn-link" onclick="document.getElementById(\'nsfw\').removeAttribute(\'class\'); document.getElementById(\'nsfw-info\').remove();">NSFW Warning - This article may contain content you do not want to see in public (pornography, violent car accidents, etc.). If you want to see the content, press this warning.</a>';
 				echo '<div id="nsfw" class="d-none">'.$body.'</div></div>';
 			} else {
-				echo '<div class="col-12">'.$body.'</div>';
+				echo '<div class="col-12 text-break">'.$body.'</div>';
 			}
 
 			echo '<div class="col-12"><hr>';
