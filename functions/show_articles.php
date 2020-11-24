@@ -25,6 +25,19 @@ for($i=0; $i<=$min; $i++) {
 	$date = time_elapsed_string('@'.$article_data['created']);
 	$tag = $article_data['tags'][0];
 
+	if(file_exists('indexes/upvotes/'.$article_id)) {
+		$upvotes = iterator_count(new FilesystemIterator(getcwd().'/indexes/upvotes/'.$article_id.'/', FilesystemIterator::SKIP_DOTS));
+	} else {
+		$upvotes = 0;
+	}
+
+	if(file_exists('indexes/downvotes/'.$article_id)) {
+		$downvotes = iterator_count(new FilesystemIterator(getcwd().'/indexes/downvotes/'.$article_id.'/', FilesystemIterator::SKIP_DOTS));
+	} else {
+		$downvotes = 0;
+	}
+
+
 	echo '<div class="col-12">
 		<img class="avatar" src="avatars/'.$creator.'.webp">
 		<a target="_blank" href="user.php?username='.$creator.'">'.$creator.'</a> 
@@ -32,7 +45,9 @@ for($i=0; $i<=$min; $i++) {
 		<a target="_blank" href="tags.php?tag='.$tag.'">#'.$tag.'</a> 
 		'.$date.'
 		<h4><a href="show_article.php?id='.$article_id.'"><p class="text-break text-truncate">'.$title.'</p></a></h4>
-		<p class="truncate">'.$body.'</p>
+		<p class="truncate text-break">'.$body.'</p>
+		<i class="fas fa-thumbs-up"></i> '.$upvotes.'
+		<i class="fas fa-thumbs-down"></i> '.$downvotes.'
 		<hr>
 	</div>';
 }
