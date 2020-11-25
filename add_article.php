@@ -3,6 +3,7 @@
 include('config.php');
 include('header.php');
 include('template/navbar.php');
+include('functions/encryption.php');
 include('functions/editor.php');
 include('functions/verify_html.php');
 include('functions/tag_verify.php');
@@ -42,11 +43,19 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 		if(strlen($_POST['title']) > 120) { die('The content of the Title field is too long.'); }
 
 		$save_to_file['title'] = $_POST['title'];
-		$save_to_file['body'] = str_replace('</body></html>', '', str_replace('<html><body>', '', str_replace('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">', '', verify_html($_POST['text']))));
+		$save_to_file['body'] = trim(str_replace('</body></html>', '', str_replace('<html><body>', '', str_replace('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">', '', verify_html($_POST['text'])))));
 		if(empty(trim(strip_tags($save_to_file['body'])))) { die(); }
 		if(strlen($save_to_file['body']) > 16384) { die('The content of the Text field is too long.'); }
 		$save_to_file['tags'] = $tags;
 		$json = json_encode($save_to_file);
+
+		$privkey_grow = grow_key(decrypt($_SESSION['privkey'], $salt, $iv), 1);
+		$save_to_file['sign_client'] = sign_message($privkey_grow, $json);
+		$privkey_grow = grow_key($server_privkey, 1);
+		$save_to_file['sign_server'] = sign_message($privkey_grow, $json);
+
+		$json = json_encode($save_to_file);
+
 		$filename = hash("sha256", $json);
 		$fp = fopen('articles/'.$filename.'.json', 'w');
 		fwrite($fp, $json);

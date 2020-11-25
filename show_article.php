@@ -7,6 +7,7 @@ include('functions/date_distance.php');
 include('template/article_comments.php');
 include('functions/editor.php');
 include('functions/verify_html.php');
+include('functions/encryption.php');
 
 ?>
 
@@ -20,6 +21,26 @@ if(!empty($_GET['id'])) {
 			$body = $json['body'];
 			$nickname = $json['creator'];
 
+			// Verify article
+			$article = $json;
+			unset($article['sign_client']);
+			unset($article['sign_server']);
+			$verify_article = json_encode($article);
+			if(!empty($json['sign_client'])) {
+				$signed_article = base64_decode($json['sign_client']);
+			}
+
+			$publickeys = json_decode(file('accounts/'.$nickname.'.json')[0], TRUE)['publickey'];
+			for($i=0; $i<=count($publickeys)-1; $i++) {
+				$public_key = grow_key($publickeys[$i]);
+				error_reporting(0);
+				if(verify_message($public_key, $verify_article, $signed_article) == 1) { $verified=1; break; }
+				error_reporting($php_errors);
+			}
+
+			if(empty($verified)) {
+				echo '<div class="col-12 alert alert-danger" role="alert"><b>WARNING! Verification of this article has failed. This probably means that it was modified by someone other than the author!</b></div>';
+			}
 
 			echo '<div class="col-12 text-break"><h2>'.htmlspecialchars($json['title']).'</h2>';
 			echo 'by <a href="user.php?username='.$json['creator'].'">'.$json['creator'].'</a>';
@@ -46,7 +67,7 @@ if(!empty($_GET['id'])) {
 				if((!file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_username)) && (!file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_username))) { $upvote_class = ''; $downvote_class = ''; }
 				echo '<a id="upvote" '.$upvote_class.' onclick="$.post(\'vote.php\', { upvote: 1, id: \''.$_GET['id'].'\'}); document.getElementById(\'downvote\').classList.remove(\'d-none\'); document.getElementById(\'upvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-success"><i class="far fa-thumbs-up"></i> Like!</button></a> ';
 				echo '<a id="downvote" '.$downvote_class.' onclick="$.post(\'vote.php\', { upvote: 0, id: \''.$_GET['id'].'\'}); document.getElementById(\'upvote\').classList.remove(\'d-none\'); document.getElementById(\'downvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Dislike!</button></a> ';
-				if($tip_enable == 1) { echo '<a href="#"><button type="button" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></a>'; }
+				if($tip_enable == 1) { echo '<a id="tip" onclick="document.getElementById(\'tip\').remove();"><button type="button" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></a>'; }
 			}
 			echo '</center>';
 			echo '<hr>';
