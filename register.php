@@ -4,6 +4,7 @@ include('config.php');
 include('header.php');
 include('template/navbar.php');
 include('functions/encryption.php');
+include('libs/other/KittyHash/kittyhash.php');
 
 if(!empty($_POST['login'])) {
 
@@ -20,12 +21,10 @@ $error = 0;
 		$keys = generate_pair_keys();
 		$recovery_phases_database = file('libs/data/english.txt');
 		$data['username'] = $username;
+		$data['node'] = $node;
 		$data['publickey'][0] = $keys['public'];
 		$data['created'] = time();
-
-		for($i=0; $i<=10; $i++) {
-			$data['balance'][$i] = 0;
-		}
+		$data['avatar'] = 'avatars/'.$username.'.webp';
 
 		$recovery_phases_ids = array_rand($recovery_phases_database, $recovery_phases_quantity);
 		$recovery_phases = '';
@@ -34,9 +33,15 @@ $error = 0;
 			$recovery_phases = trim($recovery_phases.' '.$recovery_phases_database[$recovery_phases_ids[$i]]);
 		}
 
+		generate_avatar($username);
 		$data['recovery'] = password_hash($recovery_phases, PASSWORD_BCRYPT, ['cost' => 13]);
 		$json = json_encode($data);
+		$privkey_grow = grow_key($keys['private'], 1);
+		$data['sign_client'] = sign_message($privkey_grow, $json);
+		$privkey_grow = grow_key($server_privkey, 1);
+		$data['sign_server'] = sign_message($privkey_grow, $json);
 
+		$json = json_encode($data);
 		$fp = fopen('accounts/'.$username.'.json', 'w');
 		fwrite($fp, $json);
 		fclose($fp);
@@ -50,10 +55,10 @@ $error = 0;
 		echo '<b>If you forget your password, you can use Recovery Phases to generate new ones!</b>';
 		echo '</div>';
 	} else if($error == 1) {
-		echo 'The user is already created!';
+		echo '<div class="col-12">The user is already created!</div>';
 		include('template/register.php');
 	} else if($error == 2) {
-		echo 'The user name The user name does not meet the criteria.';
+		echo '<div class="col-12">The user name does not meet the criteria.</div>';
 		include('template/register.php');
 	}
 
