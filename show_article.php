@@ -67,7 +67,20 @@ if(!empty($_GET['id'])) {
 				if((!file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_username)) && (!file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_username))) { $upvote_class = ''; $downvote_class = ''; }
 				echo '<a id="upvote" '.$upvote_class.' onclick="$.post(\'vote.php\', { upvote: 1, id: \''.$_GET['id'].'\'}); document.getElementById(\'downvote\').classList.remove(\'d-none\'); document.getElementById(\'upvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-success"><i class="far fa-thumbs-up"></i> Like!</button></a> ';
 				echo '<a id="downvote" '.$downvote_class.' onclick="$.post(\'vote.php\', { upvote: 0, id: \''.$_GET['id'].'\'}); document.getElementById(\'upvote\').classList.remove(\'d-none\'); document.getElementById(\'downvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Dislike!</button></a> ';
-				if($tip_enable == 1) { echo '<a id="tip" onclick="document.getElementById(\'tip\').remove();"><button type="button" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></a>'; }
+
+				if($tip_enable == 1) {
+					if($_SESSION['login'] != $nickname) {
+
+							if(!file_exists('indexes/tips/'.$nickname.'/'.$_GET['id'].'/'.$_SESSION['login'])) {
+
+								$current_date = date("Y-m-d");
+								if(!file_exists('indexes/tips_self/'.$_SESSION['login'].'/date/'.$current_date.'/'.$nickname)) {
+									echo '<a id="tip" onclick="$.post(\'tip.php\', { id: \''.$_GET['id'].'\'}); document.getElementById(\'tip\').remove();"><button type="button" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></a>';
+								}
+							}
+					}
+				}
+
 			}
 			echo '</center>';
 			echo '<hr>';
