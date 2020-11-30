@@ -18,6 +18,9 @@ if(!empty($_POST['id'])) {
 		// No self-upvote
 		if($article_author == $nickname) { die(); }
 
+		// No upvote the same author twice a day
+		if(file_exists("indexes/tips_self/$nickname/date/$current_date/$author_article")) { die(); }
+
 		// Random Token
 		$token = rand(0, $tokens);
 
