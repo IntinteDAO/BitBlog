@@ -31,7 +31,7 @@ if ($_FILES['file']['name']) {
 	move_uploaded_file($location, $destination);
     }
 
-    echo 'images/' . $filename;//change this URL
+    echo str_replace('upload.php', '', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]").'images/' . $filename;
     } else {
 	    echo $message = 'Something wrong with this Image!';
     }
