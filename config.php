@@ -8,8 +8,15 @@ $recovery_phases_quantity = 12;
 $max_articles_per_day = 5; //maximum number of articles added by the user per day
 $max_comments_per_day = 30; //maximum number of comments added by the user per day
 $server_privkey = '';
-
 $tip_enable = 1;
+$max_tips = 5;
+$tokens = 0;
+
+// Token data
+$token[0]['name'] = "L-SAT";
+$token[0]['description'] = "L-SAT is the smallest monetary unit of Bitcoin (Satoshi) in the second layer of Bitcoin - Liquid Network. Liquid Network is a network created for fast Bitcoin transfer between exchanges, but it is also perfect for creating value tokens (e.g. stablecoins).";
+$token[0]['writer'] = 25;
+$token[0]['user'] = 10;
 
 // Bootstrap
     header('X-Frame-Options: SAMEORIGIN');

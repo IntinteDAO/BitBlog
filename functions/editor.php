@@ -4,43 +4,55 @@ function init_editor() {
 
 return '
 
-<div id="summernote"></div>
+    <link rel="stylesheet" href="libs/css/tui/tuidoc-example-style.css" />
+    <link rel="stylesheet" href="libs/css/codemirror/codemirror.min.css"/>
+    <link rel="stylesheet" href="libs/css/tui/toastui-editor.min.css" />
 
-<script>
-window.onload = function() {
+      <div id="editor"></div>
 
-$(\'#summernote\').summernote({
-        callbacks: {
-            onImageUpload: function(files) {
-                for(let i=0; i < files.length; i++) {
-                    $.upload(files[i]);
-                }
-            }
-        },
-        height: 500,
-    });
+    <script src="libs/js/tui/md-default.js"></script>
 
-    $.upload = function (file) {
-        let out = new FormData();
-        out.append(\'file\', file, file.name);
+    <script src="libs/js/tui/toastui-editor-all.min.js"></script>
+    <script>
+	window.onload = function() {
 
-        $.ajax({
-            method: \'POST\',
-            url: \'upload.php\',
-            contentType: false,
-            cache: false,
-            processData: false,
-            data: out,
-            success: function (img) {
-                $(\'#summernote\').summernote(\'insertImage\', img);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error(textStatus + " " + errorThrown);
-            }
-        });
-    };
-}
-</script>
+      editor = new toastui.Editor({
+        el: document.querySelector(\'#editor\'),
+        initialValue: content,
+	previewStyle: \'vertical\',
+	height: \'auto\',
+        initialEditType: \'wysiwyg\',
+	hooks: {
+	addImageBlobHook: function(file, callback) {
+		out = new FormData();
+		out.append(\'file\', file, file.name);
+
+		$.ajax({
+			method: \'POST\',
+			url: \'upload.php\',
+			contentType: false,
+			cache: false,
+			processData: false,
+			data: out,
+
+			success: function (img) {
+				callback(img);
+			},
+
+			error: function (jqXHR, textStatus, errorThrown) {
+				alert(textStatus + " " + errorThrown);
+			}
+		});
+
+	return false;
+	}}
+      }); }
+    </script>
+  </body>
+</html>
+
+
+
 
 ';
 

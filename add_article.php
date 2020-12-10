@@ -15,13 +15,10 @@ if(!file_exists('indexes/antispam_articles/'.$current_date.'/'.$_SESSION['login'
 if(iterator_count(new FilesystemIterator(__DIR__.'/indexes/antispam_articles/'.$current_date.'/'.$_SESSION['login'], FilesystemIterator::SKIP_DOTS)) >= $max_articles_per_day) { die('You have exceeded the maximum number of daily entries - wait until tomorrow!'); }
 
 if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($_POST['tags'])) ) {
-
 	$error = 0;
 
-	if(strlen($_POST['text']) > 1000000) {
-		echo ("Too much data. Delete a few pictures or move them to another hosting");
-		$error = 1;
-	}
+	if(strlen($_POST['title']) > 120) { $error = 2; echo 'The content of the Title field is too long.'; }
+	if(strlen($_POST['text']) > 16384) { $error = 1; echo ("The content of the Text field is too long."); }
 
 	if($error == 0) {
 		$save_to_file['creator'] = $_SESSION['login'];
@@ -40,12 +37,11 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 
 		$save_to_file['created'] = time();
 		$save_to_file['last_update'] = time();
-		if(strlen($_POST['title']) > 120) { die('The content of the Title field is too long.'); }
 
 		$save_to_file['title'] = $_POST['title'];
-		$save_to_file['body'] = trim(str_replace('</body></html>', '', str_replace('<html><body>', '', str_replace('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">', '', verify_html($_POST['text'])))));
+		$save_to_file['body'] = htmlspecialchars($_POST['text']);
+
 		if(empty(trim(strip_tags($save_to_file['body'])))) { die(); }
-		if(strlen($save_to_file['body']) > 16384) { die('The content of the Text field is too long.'); }
 		$save_to_file['tags'] = $tags;
 		$json = json_encode($save_to_file);
 
@@ -55,7 +51,6 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 		$save_to_file['sign_server'] = sign_message($privkey_grow, $json);
 
 		$json = json_encode($save_to_file);
-
 		$filename = hash("sha256", $json);
 		$fp = fopen('articles/'.$filename.'.json', 'w');
 		fwrite($fp, $json);
@@ -83,7 +78,7 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 	echo '
 	<input type="text" id="tags" name="tags" data-role="tagsinput" value="" placeholder="Tags">
 	Tags - (like bitcoin, community, games) Use the prefix for language tags (pl-bitcoin, de-internet, fr-crypto etc.)<br>
-	<button class="btn btn-primary" onclick="document.getElementById(\'Id\').value=$(\'#summernote\').summernote(\'code\');">Add article</button>
+	<button class="btn btn-primary" id="submit" onclick="document.getElementById(\'Id\').value=editor.convertor.toMarkdown(editor.getMarkdown());">Add article</button>
 	</form></div>';
 }
 
