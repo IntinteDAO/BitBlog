@@ -41,7 +41,7 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 		$save_to_file['created'] = time();
 		$save_to_file['last_update'] = time();
 
-		$save_to_file['title'] = $_POST['title'];
+		$save_to_file['title'] = trim($_POST['title']);
 		$save_to_file['body'] = htmlspecialchars(verify_markdown(HTML2MD($_POST['text'])));
 
 		if(empty(trim(strip_tags($save_to_file['body'])))) { die(); }
