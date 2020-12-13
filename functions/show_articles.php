@@ -1,6 +1,8 @@
 <?php
 
 include('functions/date_distance.php');
+include('libs/other/parsedown/Parsedown.php');
+include('functions/remove_markdown_chars.php');
 
 function show_articles($dir)
 {
@@ -21,7 +23,9 @@ for($i=0; $i<=$min; $i++) {
 	$creator = $article_data['creator'];
 	global $node;
 	if($article_data['node'] != $node) { $creator_node = $article_data['node']; } else { $creator_node = ''; }
-	$body = strip_tags($article_data['body']);
+	$Parsedown = new Parsedown();
+	
+	$body = remove_markdown_chars(strip_tags(htmlspecialchars_decode($article_data['body'])));
 	$date = time_elapsed_string('@'.$article_data['created']);
 	$tag = $article_data['tags'][0];
 
@@ -45,7 +49,7 @@ for($i=0; $i<=$min; $i++) {
 		<a target="_blank" href="tags.php?tag='.$tag.'">#'.$tag.'</a> 
 		'.$date.'
 		<h4><a href="show_article.php?id='.$article_id.'"><p class="text-break text-truncate">'.$title.'</p></a></h4>
-		<p class="truncate text-break">'.$body.'</p>
+		<p class="truncate text-break">'.strip_tags($Parsedown->text($body)).'</p>
 		<i class="fas fa-thumbs-up"></i> '.$upvotes.'
 		<i class="fas fa-thumbs-down"></i> '.$downvotes.'
 		<hr>
