@@ -18,7 +18,7 @@ if(!empty($_GET['id'])) {
 		if(file_exists('articles/'.$_GET['id'].'.json')) {
 			$file = file('articles/'.$_GET['id'].'.json')[0];
 			$json = json_decode($file, TRUE);
-			$body = str_replace("\r\n", "<br>", trim($json['body']));
+			$body = str_replace("\n", "<br>", str_replace("\r\n", "<br>", trim($json['body'])));
 			echo '<script>var content = "'.$body.'".split("<br>");</script>';
 			$nickname = $json['creator'];
 

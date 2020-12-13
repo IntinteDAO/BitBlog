@@ -7,6 +7,9 @@ include('functions/encryption.php');
 include('functions/editor.php');
 include('functions/verify_html.php');
 include('functions/tag_verify.php');
+include('libs/other/Markdownify/src/Converter.php');
+include('libs/other/Markdownify/src/Parser.php');
+include('libs/other/Markdownify/main.php');
 
 $current_date = date("Y-m-d");
 if(empty($_SESSION['login'])) { die('You are not logged in'); }
@@ -39,7 +42,7 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 		$save_to_file['last_update'] = time();
 
 		$save_to_file['title'] = $_POST['title'];
-		$save_to_file['body'] = htmlspecialchars($_POST['text']);
+		$save_to_file['body'] = nl2br(htmlspecialchars(HTML2MD($_POST['text'])), false);
 
 		if(empty(trim(strip_tags($save_to_file['body'])))) { die(); }
 		$save_to_file['tags'] = $tags;
@@ -78,7 +81,7 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 	echo '
 	<input type="text" id="tags" name="tags" data-role="tagsinput" value="" placeholder="Tags">
 	Tags - (like bitcoin, community, games) Use the prefix for language tags (pl-bitcoin, de-internet, fr-crypto etc.)<br>
-	<button class="btn btn-primary" id="submit" onclick="document.getElementById(\'Id\').value=editor.convertor.toMarkdown(editor.getMarkdown());">Add article</button>
+	<button class="btn btn-primary" id="submit" onclick="document.getElementById(\'Id\').value=editor.getMarkdown();">Add article</button>
 	</form></div>';
 }
 
