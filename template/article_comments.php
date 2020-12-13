@@ -20,7 +20,7 @@ for($i=0; $i<=count($files)-1; $i++) {
 	$read_comment = file($files[$i])[0];
 	$read_comment_array = json_decode($read_comment, TRUE);
 	echo '<img class="avatar" src="avatars/'.$read_comment_array['username'].'.webp"> <b>'.$read_comment_array['username'].'</b> - '.time_elapsed_string('@'.$read_comment_array['created']).'<br>';
-	echo htmlspecialchars(trim($read_comment_array['body'])).'<br>';
+	echo '<span class="text-break">'.htmlspecialchars(trim($read_comment_array['body'])).'</span>';
 }
 
 if(!empty($files)) {
@@ -50,7 +50,7 @@ for($i=0; $i<=count($files)-1; $i++) {
 		echo '<img class="avatar" src="avatars/'.$read_comment_array['username'].'.webp"> <b>'.$read_comment_array['username'].'</b> - '.time_elapsed_string('@'.$read_comment_array['created']).'<br>';
 	}
 
-	echo htmlspecialchars(trim($read_comment_array['body'])).'<br>';
+	echo '<p class="text-break">'.htmlspecialchars(trim($read_comment_array['body'])).'</p>';
 	echo '<div id="'.$id_comment.'"></div>';
 
 	if(file_exists(str_replace('.json', '', $files[$i]))) {
