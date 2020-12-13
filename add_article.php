@@ -5,7 +5,7 @@ include('header.php');
 include('template/navbar.php');
 include('functions/encryption.php');
 include('functions/editor.php');
-include('functions/verify_html.php');
+include('functions/verify_markdown.php');
 include('functions/tag_verify.php');
 include('libs/other/Markdownify/src/Converter.php');
 include('libs/other/Markdownify/src/Parser.php');
@@ -42,7 +42,7 @@ if( (!empty($_POST['title'])) && (!empty(trim($_POST['text']))) && !empty(trim($
 		$save_to_file['last_update'] = time();
 
 		$save_to_file['title'] = $_POST['title'];
-		$save_to_file['body'] = nl2br(htmlspecialchars(HTML2MD($_POST['text'])), false);
+		$save_to_file['body'] = htmlspecialchars(verify_markdown(HTML2MD($_POST['text'])));
 
 		if(empty(trim(strip_tags($save_to_file['body'])))) { die(); }
 		$save_to_file['tags'] = $tags;
