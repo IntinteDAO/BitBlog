@@ -49,7 +49,12 @@ if(!empty($_GET['id'])) {
 			echo ' | '.time_elapsed_string('@'.$json['created']);
 			echo '<hr></div>';
 
-			if(in_array('nsfw', $json['tags'])) {
+			if(isset($_SESSION['nsfw'])) {
+				$nsfw = $_SESSION['nsfw'];
+			} else {
+				 $nsfw = 1; }
+
+			if(in_array('nsfw', $json['tags']) && $nsfw!=0) {
 				echo '<div class="col-12 text-break">';
 				echo '<a id="nsfw-info" class="btn btn-link" onclick="document.getElementById(\'nsfw\').removeAttribute(\'class\'); document.getElementById(\'nsfw-info\').remove();">NSFW Warning - This article may contain content you do not want to see in public (pornography, violent car accidents, etc.). If you want to see the content, press this warning.</a>';
 				echo '<div id="nsfw" class="d-none"><div id="viewer"></div></div></div>';
