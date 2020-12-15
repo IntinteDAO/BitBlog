@@ -7,6 +7,12 @@ include('functions/remove_markdown_chars.php');
 function show_articles($dir)
 {
 
+if(isset($_SESSION['nsfw'])) {
+	$nsfw = $_SESSION['nsfw'];
+} else {
+	$nsfw = 1;
+}
+
 $dirpath = getcwd().'/'.$dir.'/*';
 $files = array();
 $files = glob($dirpath);
@@ -18,6 +24,10 @@ usort($files, function($x, $y) {
 $min = min(count($files), 30) - 1;
 for($i=0; $i<=$min; $i++) {
 	$article_data = json_decode(file($files[$i])[0], TRUE);
+
+	$is_nsfw = in_array("nsfw", $article_data['tags']);
+	if($is_nsfw == 1 && $nsfw == 2) { continue; }
+
 	$title = htmlspecialchars($article_data['title']);
 	$article_id = str_replace('.json', '', str_replace(getcwd().'/'.$dir.'/', '', $files[$i]));
 	$creator = $article_data['creator'];
@@ -25,7 +35,12 @@ for($i=0; $i<=$min; $i++) {
 	if($article_data['node'] != $node) { $creator_node = $article_data['node']; } else { $creator_node = ''; }
 	$Parsedown = new Parsedown();
 	
-	$body = remove_markdown_chars(strip_tags(htmlspecialchars_decode($article_data['body'])));
+	if($is_nsfw == 1 && $nsfw == 1) {
+		$body = 'This article is hidden with an established policy to display the NSFW tag.';
+	} else {
+		$body = remove_markdown_chars(strip_tags(htmlspecialchars_decode($article_data['body'])));
+	}
+
 	$date = time_elapsed_string('@'.$article_data['created']);
 	$tag = $article_data['tags'][0];
 

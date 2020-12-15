@@ -9,6 +9,7 @@
 
 <?php
 	if(isset($_SESSION['login'])) {
+		echo '<li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>';
 		echo '<li class="nav-item"><a class="nav-link" href="add_article.php">Add article</a></li>';
 		echo '<form method="POST" action="logout.php"><li class="nav-item"><input type="hidden" name="logout" value="1"><button class="btn btn-link nav-link" type="submit">Logout</button></li></form>';
 	} else {
