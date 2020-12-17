@@ -12,6 +12,9 @@ $tip_enable = 1;
 $max_tips = 5;
 $tokens = 0;
 
+$recaptcha_keys['private'] = '';
+$recaptcha_keys['public'] = '';
+
 // Token data
 $token[0]['name'] = "L-SAT";
 $token[0]['description'] = "L-SAT is the smallest monetary unit of Bitcoin (Satoshi) in the second layer of Bitcoin - Liquid Network. Liquid Network is a network created for fast Bitcoin transfer between exchanges, but it is also perfect for creating value tokens (e.g. stablecoins).";

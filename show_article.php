@@ -8,6 +8,7 @@ include('template/article_comments.php');
 include('functions/viewer.php');
 include('functions/encryption.php');
 
+
 ?>
 
 <?php
@@ -66,30 +67,37 @@ if(!empty($_GET['id'])) {
 
 			echo '<div class="col-12"><hr>';
 			if(!isset($_SESSION['login'])) { echo '<center>No account? Create one <a target="_blank" href="register.php">today</a>! For example, the account allows you to support authors of content</center>'; }
-			echo '<center>';
+			echo '<span id="span-article">';
 			if(isset($_SESSION['login'])) {
 				$id_username = hash('sha256', $_SESSION['login']);
 				if(file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_username)) { $upvote_class = ''; } else { $upvote_class = 'class="d-none"';}
 				if(file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_username)) { $downvote_class = ''; } else { $downvote_class = 'class="d-none"';}
 				if((!file_exists('indexes/downvotes/'.$_GET['id'].'/'.$id_username)) && (!file_exists('indexes/upvotes/'.$_GET['id'].'/'.$id_username))) { $upvote_class = ''; $downvote_class = ''; }
-				echo '<a id="upvote" '.$upvote_class.' onclick="$.post(\'vote.php\', { upvote: 1, id: \''.$_GET['id'].'\'}); document.getElementById(\'downvote\').classList.remove(\'d-none\'); document.getElementById(\'upvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-success"><i class="far fa-thumbs-up"></i> Like!</button></a> ';
-				echo '<a id="downvote" '.$downvote_class.' onclick="$.post(\'vote.php\', { upvote: 0, id: \''.$_GET['id'].'\'}); document.getElementById(\'upvote\').classList.remove(\'d-none\'); document.getElementById(\'downvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Dislike!</button></a> ';
+				echo '<a id="upvote" class="buttons-show-article" '.$upvote_class.' onclick="$.post(\'vote.php\', { upvote: 1, id: \''.$_GET['id'].'\'}); document.getElementById(\'downvote\').classList.remove(\'d-none\'); document.getElementById(\'upvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-success"><i class="far fa-thumbs-up"></i> Like!</button></a>';
+				echo '<a id="downvote" class="buttons-show-article" '.$downvote_class.' onclick="$.post(\'vote.php\', { upvote: 0, id: \''.$_GET['id'].'\'}); document.getElementById(\'upvote\').classList.remove(\'d-none\'); document.getElementById(\'downvote\').classList.add(\'d-none\');"><button type="button" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Dislike!</button></a>';
 
-				if($tip_enable == 1) {
+				if($tip_enable == 1 && $_SESSION['tip']==0) {
 					if($_SESSION['login'] != $nickname) {
 
 							if(!file_exists('indexes/tips/'.$nickname.'/'.$_GET['id'].'/'.$_SESSION['login'])) {
 
 								$current_date = date("Y-m-d");
 								if(!file_exists('indexes/tips_self/'.$_SESSION['login'].'/date/'.$current_date.'/'.$nickname)) {
-									echo '<a id="tip" onclick="$.post(\'tip.php\', { id: \''.$_GET['id'].'\'}); document.getElementById(\'tip\').remove();"><button type="button" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></a>';
+									if (!empty($recaptcha_keys["private"]) && !empty($recaptcha_keys["public"])) {
+										include('libs/other/reCaptcha/Recaptcha.php');
+										echo '<script src="https://www.google.com/recaptcha/api.js"></script>';
+										echo '<script>function onSubmit(token) { return new Promise(function (resolve, reject) { console.log(document.getElementById("login")); document.getElementById("login").submit(); })};</script>'; 
+										echo '<form style="display: flex;" method="POST" id="login" name="login" action="tip.php" post-action="tip.php"><input type="hidden" name="id" value='.$_GET['id'].'><button id="submitBtn" name="submitBtn" class="btn btn-warning g-recaptcha" data-callback="onSubmit" data-sitekey="'.$recaptcha_keys["public"].'" value="Auth"><i class="far fa-star"></i> Tip!</button></form>';
+									} else {
+										echo '<input type="hidden" name="id" value='.$_GET['id'].'><button type="submit" class="btn btn-warning"><i class="far fa-star"></i> Tip!</button></form>';
+									}
 								}
 							}
 					}
 				}
 
 			}
-			echo '</center>';
+			echo '</span>';
 			echo '<hr>';
 			show_comments($_GET['id']);
 			echo '<br>';

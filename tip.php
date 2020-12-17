@@ -1,7 +1,22 @@
 <?php
 
 include('config.php');
+
 if(empty($_SESSION['login'])) { die('No auth'); }
+
+	if (!empty($recaptcha["private"]) && !empty($recaptcha["public"])) {
+	    require 'libs/other/reCaptcha/Recaptcha.php';
+	    if(empty($_POST['g-recaptcha-response'])) { die('Something wrong with your reCaptcha'); }
+	    $recaptcha = $_POST['g-recaptcha-response'];
+	    $object = new Recaptcha(['client-key' => $recaptcha_keys["public"], 'secret-key' => $recaptcha_keys["private"]]);
+	    $response = $object->verifyResponse($recaptcha);
+
+	    if(isset($response['success']) and $response['success'] != true) {
+		echo "An Error Occured and Error code is :".$response['error-codes'][0].'<br>';
+		die();
+		}
+	}
+
 
 if(!empty($_POST['id'])) {
     if (preg_match("/^[a-f0-9]{64}$/", $_POST['id'])) {
@@ -15,11 +30,12 @@ if(!empty($_POST['id'])) {
 		}
 
 		$article_author = json_decode(file('articles/'.$_POST['id'].'.json')[0], TRUE)['creator'];
+
 		// No self-upvote
 		if($article_author == $nickname) { die(); }
 
 		// No upvote the same author twice a day
-		if(file_exists("indexes/tips_self/$nickname/date/$current_date/$author_article")) { die(); }
+		if(file_exists("indexes/tips_self/$nickname/date/$current_date/$article_author")) { die(); }
 
 		// Random Token
 		$token = rand(0, $tokens);
@@ -41,6 +57,7 @@ if(!empty($_POST['id'])) {
 		if(!file_exists("indexes/tips_self/$nickname/date")) { mkdir("indexes/tips_self/$nickname/date"); }
 		if(!file_exists("indexes/tips_self/$nickname/date/$current_date")) { mkdir("indexes/tips_self/$nickname/date/$current_date"); }
 		touch("indexes/tips_self/$nickname/date/$current_date/$article_author");
+		echo '<meta http-equiv="refresh" content="0; url=show_article.php?id='.$post_id.'" />';
 	}
     }
 }

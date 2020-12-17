@@ -22,6 +22,13 @@ if(isset($_SESSION['login'])) {
 		}
 	}
 
+	if(isset($_POST['tip'])) {
+		if(($_POST['tip'] == 0 || $_POST['tip'] == 1) && ($_SESSION['tip'] != $_POST['tip']))  {
+			$_SESSION['tip'] = $_POST['tip'];
+			$user_data['tip'] = $_POST['tip'];
+			$modification = 1;
+		}
+	}
 
 	if($modification == 1) {
 		$json = json_encode($user_data);

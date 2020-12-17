@@ -38,6 +38,9 @@ if((!empty($_POST['login'])) && (!empty($_POST['pkey']))) {
 		if(isset($auth)) {
 			$_SESSION['login'] = $username;
 			$_SESSION['privkey'] = encrypt($_POST['pkey'], $salt, $iv);
+			if(isset($user_data['nsfw'])) { $_SESSION['nsfw'] = $user_data['nsfw']; } else { $_SESSION['nsfw'] = 1; } // NSFW
+			if(isset($user_data['tip'])) { $_SESSION['tip'] = $user_data['tip']; } else { $_SESSION['tip'] = 0; } // TIP
+
 			echo '<meta http-equiv="refresh" content="0; url=index.php" />';
 		} else {
 			echo 'Your private key is not correct';

@@ -26,9 +26,14 @@ echo
       if($_SESSION['nsfw']==1) { echo '<option selected value=1>Always hide</option>'; } else { echo '<option value=1>Always hide</option>'; }
       if($_SESSION['nsfw']==2) { echo '<option selected value=2>Don\'t show</option>'; } else { echo '<option value=2>Don\'t show</option>'; }
 
-echo '
-    </select>
-</div>
+echo '</select><br>';
+
+	echo 'Tip button and reCaptcha settings (increases privacy, but you can\'t tip anymore):
+        <select class="form-control" name="tip">';
+	      if($_SESSION['tip']==0) { echo '<option selected value=0>Enable Tip and reCaptcha</option>'; } else { echo '<option value=0>Enable Tip and reCaptcha</option>'; }
+	      if($_SESSION['tip']==1) { echo '<option selected value=1>Disable Tip and reCaptcha</option>'; } else { echo '<option value=1>Disable Tip and reCaptcha</option>'; }
+echo	'</select>';
+echo '</div>
 
     </div>
 <button class="btn btn-primary" type="submit">Update</button>
